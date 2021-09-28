@@ -60,6 +60,12 @@ func (prod Products) MiddlewareProductValidation(next http.Handler) http.Handler
 			return
 		}
 
+		err = prod.Validate()
+		if err != nil {
+			http.Error(rw, err.Error(), http.StatusBadRequest)
+			return
+		}
+
 		ctx := context.WithValue(r.Context(), KeyProduct{}, prod)
 
 		next.ServeHTTP(rw, r.WithContext(ctx))
