@@ -12,6 +12,7 @@ import (
 
 func (p *Products) GetProducts(rw http.ResponseWriter, r *http.Request) {
 	lp := data.GetProducts()
+	rw.Header().Add("Content-Type", "application/json")
 	err := lp.ToJSON(rw)
 	if err != nil {
 		http.Error(rw, "Unable to convert data.", http.StatusInternalServerError)
