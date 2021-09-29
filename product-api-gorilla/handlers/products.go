@@ -1,3 +1,18 @@
+// Package classification of Product API
+//
+// Documentation for Product API
+//
+//	Schemes: http
+//	BasePath: /
+//	Version: 1.0.0
+//
+//	Consumes:
+//	- application/json
+//
+//	Produces:
+//	- application/json
+//
+// swagger:meta
 package handlers
 
 import (
@@ -5,9 +20,6 @@ import (
 	"go-microservices/product-api-gorilla/data"
 	"log"
 	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
 )
 
 type Products struct {
@@ -18,36 +30,24 @@ func NewProducts(l *log.Logger) *Products {
 	return &Products{l}
 }
 
-func (p *Products) GetProducts(rw http.ResponseWriter, r *http.Request) {
-	lp := data.GetProducts()
-	err := lp.ToJSON(rw)
-	if err != nil {
-		http.Error(rw, "Unable to convert data.", http.StatusInternalServerError)
-		return
-	}
+// A list of products that are returned in response
+// swagger:response productsResponse
+type productsResponse struct {
+	// All products in the system
+	// in:body
+	Body []data.Product
 }
 
-func (p *Products) AddProduct(rw http.ResponseWriter, r *http.Request) {
-	prod := r.Context().Value(KeyProduct{}).(*data.Product)
-
-	prod.AddProduct()
+// swagger:parameters deleteProduct
+type productIDParameterWrapper struct {
+	// The id of the product to delete from the system
+	// in: path
+	// required: true
+	ID int `json:"id"`
 }
 
-func (p *Products) UpdateProduct(rw http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		http.Error(rw, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	prod := r.Context().Value(KeyProduct{}).(*data.Product)
-
-	err = prod.UpdateProduct(id)
-	if err != nil {
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-	}
-}
+// swagger:response noContent
+type productNoContent struct{}
 
 type KeyProduct struct{}
 
