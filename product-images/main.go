@@ -30,6 +30,7 @@ func main() {
 	sm := mux.NewRouter()
 	ph := sm.Methods(http.MethodPost).Subrouter()
 	ph.HandleFunc("/images/{id:[0-9]+}/{filename:[a-zA-Z]+.[a-z]{3}}", fh.ServeHTTP)
+	ph.HandleFunc("/images", fh.SaveFileMultiPart)
 
 	gh := sm.Methods(http.MethodGet).Subrouter()
 	gh.Handle("/images/{id:[0-9]+}/{filename:[a-zA-Z]+.[a-z]{3}}", http.StripPrefix("/images/", http.FileServer(http.Dir(basePath))))
